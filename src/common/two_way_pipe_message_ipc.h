@@ -5,6 +5,8 @@
 #include <Sddl.h>
 #include <accctrl.h>
 #include <aclapi.h>
+#include <string>
+#include <list>  
 
 class TwoWayPipeMessageIPC
 {
