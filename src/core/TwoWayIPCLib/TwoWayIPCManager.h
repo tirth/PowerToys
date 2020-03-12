@@ -24,7 +24,6 @@ class ATL_NO_VTABLE CTwoWayIPCManager :
     public IDispatchImpl<ITwoWayIPCManager, &IID_ITwoWayIPCManager, &LIBID_TwoWayIPCLibLib, /*wMajor =*/1, /*wMinor =*/0>
 {
 public:
-    typedef void (*callback_function)(const std::wstring&);
     CTwoWayIPCManager();
     ~CTwoWayIPCManager();
 
@@ -53,12 +52,13 @@ public:
 
     STDMETHOD(SendMessage)
     (BSTR message);
-    STDMETHOD(StartIPC)
-    ();
+
+    STDMETHOD(Initialize)
+    (BSTR runnerPipeName, BSTR settingsPipeName);
 
 private:
     TwoWayPipeMessageIPC* m_MessagePipe;
-
+    BSTR m_message_from_runner;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(TwoWayIPCManager), CTwoWayIPCManager)

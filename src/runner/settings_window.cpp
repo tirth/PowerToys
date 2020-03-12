@@ -141,6 +141,8 @@ void dispatch_received_json_callback(PVOID data)
 
 void receive_json_send_to_main_thread(const std::wstring& msg)
 {
+    HWND g_main_wnd = nullptr;
+    MessageBox(g_main_wnd, msg.c_str(), L"From Runner: Json from settings Thread", MB_OK);
     std::wstring* copy = new std::wstring(msg);
     dispatch_run_on_main_ui_thread(dispatch_received_json_callback, copy);
 }
@@ -203,6 +205,7 @@ BOOL run_settings_non_elevated(LPCWSTR executable_path, LPWSTR executable_args, 
                                           &siex.StartupInfo,
                                           process_info);
 
+
     return process_created;
 }
 
@@ -221,9 +224,10 @@ void run_settings_window()
     // settings_theme: pass "dark" to start the settings window in dark mode
 
     // Arg 1: executable path.
-    std::wstring executable_path = get_module_folderpath();
-    executable_path.append(L"\\PowerToysSettings.exe");
+    std::wstring executable_path = get_module_folderpath().append(L"\\PowerToysSettings.exe");
+    std::wstring executable_path_v2 = get_module_folderpath().append(L"\\netcoreapp3.1\\ATLTest.exe");
 
+    
     // Arg 2: pipe server. Generate unique names for the pipes, if getting a UUID is possible.
     std::wstring powertoys_pipe_name(L"\\\\.\\pipe\\powertoys_runner_");
     std::wstring settings_pipe_name(L"\\\\.\\pipe\\powertoys_settings_");
@@ -262,10 +266,12 @@ void run_settings_window()
     executable_args.append(settings_theme);
 
     BOOL process_created = false;
+    BOOL process_created_v2 = false;
 
     if (is_process_elevated())
     {
         process_created = run_settings_non_elevated(executable_path.c_str(), executable_args.data(), &process_info);
+        process_created = run_settings_non_elevated(executable_path_v2.c_str(), executable_args.data(), &process_info);
     }
 
     if (FALSE == process_created)
@@ -276,6 +282,20 @@ void run_settings_window()
         // In the second case the Settings process will run elevated.
         STARTUPINFO startup_info = { sizeof(startup_info) };
         if (!CreateProcessW(executable_path.c_str(),
+                            executable_args.data(),
+                            nullptr,
+                            nullptr,
+                            FALSE,
+                            0,
+                            nullptr,
+                            nullptr,
+                            &startup_info,
+                            &process_info))
+        {
+            goto LExit;
+        }
+
+        if (!CreateProcessW(executable_path_v2.c_str(),
                             executable_args.data(),
                             nullptr,
                             nullptr,

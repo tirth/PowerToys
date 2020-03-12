@@ -7,7 +7,7 @@
 #include "resource.h"
 #include <common/dpi_aware.h>
 #include <common/common.h>
-
+#include <iostream>
 #include "trace.h"
 
 #pragma comment(lib, "shlwapi.lib")
@@ -33,6 +33,7 @@ using namespace winrt::Windows::Web::Http::Headers;
 using namespace winrt::Windows::Web::UI;
 using namespace winrt::Windows::Web::UI::Interop;
 using namespace winrt::Windows::System;
+using namespace std;
 
 HINSTANCE g_hinst = nullptr;
 HWND g_main_wnd = nullptr;

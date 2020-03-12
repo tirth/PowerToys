@@ -9,13 +9,11 @@
 
 using namespace std;
 
-
 CTwoWayIPCManager::CTwoWayIPCManager()
 {
-    wcout << L"Default Constructor Invoked" << L"\n";
-    m_MessagePipe = nullptr;
+        this->m_MessagePipe = nullptr;
+        m_message_from_runner = nullptr;
 }
-
 
 CTwoWayIPCManager::~CTwoWayIPCManager()
 {
@@ -28,30 +26,28 @@ Send IPC Message.
 STDMETHODIMP CTwoWayIPCManager::SendMessage(BSTR message)
 {
     wstring strMessage = (PCWSTR)message;
-    wcout << strMessage.c_str() << L"\n";
+    this->m_MessagePipe->send(strMessage);
+    wcout << "sending message" << L"\n";
     return S_OK;
 }
 
-/*
-Start IPC.
-*/
-STDMETHODIMP CTwoWayIPCManager::StartIPC()
+STDMETHODIMP CTwoWayIPCManager::Initialize(BSTR runnerPipeName, BSTR settingsPipeName)
 {
-    wcout << L"Starting an IPC Process." << L"\n";
+    try
+    {
+        wstring powertoys_pipe_name = (PCWSTR)runnerPipeName;
+        wstring settings_pipe_name = (PCWSTR)settingsPipeName;
+
+        wcout << powertoys_pipe_name.c_str() << L"\n";
+        wcout << settings_pipe_name.c_str() << L"\n";
+
+        this->m_MessagePipe = nullptr;
+        this->m_MessagePipe = new TwoWayPipeMessageIPC(powertoys_pipe_name, settings_pipe_name, nullptr);
+        this->m_MessagePipe->start(nullptr);
+    }
+    catch (std::exception exp)
+    {
+        wcout << "failed starting queue " << L"\n";
+    }
     return S_OK;
 }
-
-/*
- Initiliaze IPC object.
-
-STDMETHODIMP CTwoWayIPCManager::InitializeIPC(callback_function func)
-{
-    std::wstring powertoys_pipe_name(L"\\\\.\\pipe\\powertoys_runner_");
-    std::wstring settings_pipe_name(L"\\\\.\\pipe\\powertoys_settings_");
-    wcout << powertoys_pipe_name.c_str() << L"\n";
-    wcout << settings_pipe_name.c_str() << L"\n";
-
-    wcout << L"Initialize Method Invoked" << L"\n";
-    return S_OK;
-}
-*/
