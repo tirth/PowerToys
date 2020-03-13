@@ -41,8 +41,8 @@ library TwoWayIPCLibLib
 	coclass TwoWayIPCManager
 	{
 		[default] interface ITwoWayIPCManager;
-		[default, source] dispinterface _ITwoWayIPCManagerEvents;
 	};
 };
+
 
 import "shobjidl.idl";

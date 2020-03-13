@@ -224,8 +224,8 @@ void run_settings_window()
     // settings_theme: pass "dark" to start the settings window in dark mode
 
     // Arg 1: executable path.
-    std::wstring executable_path = get_module_folderpath().append(L"\\PowerToysSettings.exe");
-    std::wstring executable_path_v2 = get_module_folderpath().append(L"\\netcoreapp3.1\\ATLTest.exe");
+    std::wstring executable_path = get_module_folderpath().append(L"\\settings.exe");
+    //std::wstring executable_path_v2 = get_module_folderpath().append(L"\\netcoreapp3.1\\Microsoft.PowerToys.Settings.UI.Runner.exe");
 
     
     // Arg 2: pipe server. Generate unique names for the pipes, if getting a UUID is possible.
@@ -271,7 +271,7 @@ void run_settings_window()
     if (is_process_elevated())
     {
         process_created = run_settings_non_elevated(executable_path.c_str(), executable_args.data(), &process_info);
-        process_created = run_settings_non_elevated(executable_path_v2.c_str(), executable_args.data(), &process_info);
+        //process_created = run_settings_non_elevated(executable_path_v2.c_str(), executable_args.data(), &process_info);
     }
 
     if (FALSE == process_created)
@@ -295,6 +295,7 @@ void run_settings_window()
             goto LExit;
         }
 
+        /*
         if (!CreateProcessW(executable_path_v2.c_str(),
                             executable_args.data(),
                             nullptr,
@@ -308,6 +309,7 @@ void run_settings_window()
         {
             goto LExit;
         }
+        */
     }
 
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))

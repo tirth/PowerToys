@@ -6,7 +6,7 @@
 #include <accctrl.h>
 #include <aclapi.h>
 #include <string>
-#include <list>  
+#include <list>
 
 class TwoWayPipeMessageIPC
 {
@@ -46,6 +46,11 @@ public:
         input_pipe_thread.join();
     }
 
+    void DefaultCallbackFunction(const std::wstring& msg)
+    {
+        this->callback_response_message = msg;
+    }
+
 private:
     AsyncMessageQueue input_queue;
     AsyncMessageQueue output_queue;
@@ -55,6 +60,7 @@ private:
     std::thread output_queue_thread;
     std::thread input_pipe_thread;
     std::mutex pipe_connect_handle_mutex; // For manipulating the current_connect_pipe
+    std::wstring callback_response_message;
 
     HANDLE current_connect_pipe_handle = NULL;
     bool closed = false;
@@ -472,7 +478,21 @@ private:
             {
                 break;
             }
-            dispatch_inc_message_function(message);
+            if (dispatch_inc_message_function == nullptr)
+            {
+                this->callback_response_message = message;
+            }
+            else
+            {
+                try
+                {
+                    dispatch_inc_message_function(message);
+                }
+                catch (std::exception exp)
+                {
+                    //log exception here
+                }
+            }
         }
     }
 };

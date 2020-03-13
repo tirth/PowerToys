@@ -21,10 +21,11 @@ namespace Microsoft.PowerToys.Settings.UI.Runner
             // Hook up x:Bind source.
             WindowsXamlHost windowsXamlHost = sender as WindowsXamlHost;
             ShellPage userControl = windowsXamlHost.GetUwpInternalObject() as ShellPage;
-
+            //Program.ipcWrapper.SendMessage("{\"general\":{\"startup\":true,\"run_elevated\":true,\"enabled\":{\"FancyZones\":true,\"PowerRename\":true,\"Shortcut Guide\":true}}}");
             if (userControl != null)
             {
                 //userControl.XamlIslandMessage = this.WPFMessage;
+
             }
         }
 
